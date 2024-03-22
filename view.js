@@ -1,48 +1,17 @@
-const getTodoElement = (todo) => {
-  const { text, completed } = todo;
-  return `
-    <li ${completed ? 'class="completed"' : ""}>
-      <div class="view">
-        <input
-          ${completed ? "checked" : ""}
-          class='toggle'
-          type='checkbox'>
-          <label>${text}</label>
-          <button class='destroy'></button>
-      </div>
-      <input class='edit' value="${text}">
-    </li>
-  `;
-};
-
-const getTodoCount = (todos) => {
-  const notCompleted = todos.filter((todo) => !todo.completed);
-  const { length } = notCompleted;
-  if (length === 1) {
-    return "1 Item left";
-  }
-
-  return `${length} Items left`;
-};
+import todoView from "./todoView.js";
+import counterView from "./counterView.js";
+import filterView from "./filterView.js";
 
 export default (targetElement, state) => {
-  const { todos, currentFilter } = state;
-
   const element = targetElement.cloneNode(true);
+
   const list = element.querySelector(".todo-list");
   const counter = element.querySelector(".todo-count");
   const filters = element.querySelector(".filters");
 
-  list.innerHTML = todos.map(getTodoElement).join("");
-  counter.textContent = getTodoCount(todos);
-
-  Array.from(filters.querySelectorAll("li a")).forEach((a) => {
-    if (a.textContent === currentFilter) {
-      a.classList.add("selected");
-    } else {
-      a.classList.remove("selected");
-    }
-  });
+  list.replaceWith(todoView(list, state));
+  counter.replaceWith(counterView(counter, state));
+  filters.replaceWith(filterView(filters, state));
 
   return element;
 };
